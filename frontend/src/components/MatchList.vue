@@ -14,6 +14,7 @@ const tabs = [
 
 const props = defineProps({
   puuid: { type: String, required: true },
+  refreshKey: { type: Number, default: 0 },
 })
 
 const matches = ref([])
@@ -24,6 +25,33 @@ const hasMore = ref(true)
 const tierMap = ref({})
 const activeTab = ref(0)
 let fetchId = 0
+
+function cacheKey() {
+  const filterStr = JSON.stringify(tabs[activeTab.value].filter)
+  return `lolgg_matches_${props.puuid}_${filterStr}`
+}
+
+function saveToCache() {
+  try {
+    sessionStorage.setItem(cacheKey(), JSON.stringify({
+      matches: matches.value,
+      tierMap: tierMap.value,
+      hasMore: hasMore.value,
+    }))
+  } catch { /* sessionStorage full, ignore */ }
+}
+
+function loadFromCache() {
+  try {
+    const cached = sessionStorage.getItem(cacheKey())
+    if (!cached) return false
+    const data = JSON.parse(cached)
+    matches.value = data.matches
+    tierMap.value = data.tierMap || {}
+    hasMore.value = data.hasMore
+    return true
+  } catch { return false }
+}
 
 function collectPuuids(matchList) {
   const set = new Set()
@@ -41,12 +69,15 @@ async function prefetchTiers(matchList) {
   try {
     const res = await getTiers(puuids)
     tierMap.value = { ...tierMap.value, ...res.data.tiers }
+    saveToCache()
   } catch (e) {
     // silently fail
   }
 }
 
-async function fetchMatches() {
+async function fetchMatches(force = false) {
+  if (!force && loadFromCache()) return
+
   const currentFetchId = ++fetchId
   loading.value = true
   error.value = null
@@ -58,6 +89,7 @@ async function fetchMatches() {
     if (currentFetchId !== fetchId) return // stale response
     matches.value = res.data
     if (res.data.length < PAGE_SIZE) hasMore.value = false
+    saveToCache()
     // Start prefetching tiers in background
     prefetchTiers(res.data)
   } catch (e) {
@@ -77,6 +109,7 @@ async function loadMore() {
     if (currentFetchId !== fetchId) return // tab changed during load
     matches.value.push(...res.data)
     if (res.data.length < PAGE_SIZE) hasMore.value = false
+    saveToCache()
     // Prefetch tiers for new matches
     prefetchTiers(res.data)
   } catch (e) {
@@ -89,11 +122,14 @@ async function loadMore() {
 function selectTab(index) {
   if (activeTab.value === index) return
   activeTab.value = index
-  fetchMatches()
+  fetchMatches(false)
 }
 
-onMounted(fetchMatches)
-watch(() => props.puuid, fetchMatches)
+onMounted(() => fetchMatches(false))
+watch(() => props.puuid, () => fetchMatches(false))
+watch(() => props.refreshKey, (newVal, oldVal) => {
+  if (newVal > oldVal) fetchMatches(true)
+})
 </script>
 
 <template>
