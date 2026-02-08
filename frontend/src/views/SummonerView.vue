@@ -145,7 +145,7 @@ watch(() => route.params, fetchSummoner)
   <div class="min-h-screen">
     <!-- Header -->
     <header class="bg-bg-secondary border-b border-bg-tertiary py-3 px-6">
-      <div class="max-w-6xl mx-auto flex items-center gap-6">
+      <div class="max-w-7xl mx-auto flex items-center gap-6">
         <router-link to="/" class="text-xl font-bold shrink-0 no-underline">
           <span class="text-win">LoL</span><span class="text-text-secondary">.GG</span>
         </router-link>
@@ -169,7 +169,7 @@ watch(() => route.params, fetchSummoner)
     </div>
 
     <!-- Content -->
-    <div v-else-if="summoner" class="max-w-6xl mx-auto px-4 py-6">
+    <div v-else-if="summoner" class="max-w-7xl mx-auto px-4 py-6">
       <div class="flex flex-col lg:flex-row gap-6">
         <!-- Left Sidebar -->
         <div class="lg:w-[22rem] shrink-0 space-y-4">
