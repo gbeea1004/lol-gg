@@ -1,39 +1,18 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
-
-const HISTORY_KEY = 'lolgg_search_history'
-const MAX_HISTORY = 5
+import { useSearchHistory } from '../composables/useSearchHistory'
 
 const props = defineProps({
   compact: { type: Boolean, default: false },
 })
 
 const router = useRouter()
+const { history, load: loadHistory, save: saveToHistory, remove: removeHistory } = useSearchHistory()
 const searchInput = ref('')
 const showHistory = ref(false)
-const history = ref([])
 const wrapper = ref(null)
-
-function loadHistory() {
-  try {
-    history.value = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]')
-  } catch { history.value = [] }
-}
-
-function saveToHistory(gameName, tagLine) {
-  const filtered = history.value.filter(
-    h => !(h.gameName === gameName && h.tagLine === tagLine)
-  )
-  filtered.unshift({ gameName, tagLine })
-  history.value = filtered.slice(0, MAX_HISTORY)
-  localStorage.setItem(HISTORY_KEY, JSON.stringify(history.value))
-}
-
-function removeHistory(index) {
-  history.value.splice(index, 1)
-  localStorage.setItem(HISTORY_KEY, JSON.stringify(history.value))
-}
+const inputEl = ref(null)
 
 function handleSearch() {
   const input = searchInput.value.trim()
@@ -55,6 +34,7 @@ function handleSearch() {
 function selectHistory(item) {
   saveToHistory(item.gameName, item.tagLine)
   showHistory.value = false
+  inputEl.value?.blur()
   router.push({ name: 'Summoner', params: { gameName: item.gameName, tagLine: item.tagLine } })
   searchInput.value = ''
 }
@@ -78,6 +58,7 @@ onUnmounted(() => {
   <div ref="wrapper" class="relative w-full" :class="compact ? 'max-w-md' : 'max-w-xl'">
     <form @submit.prevent="handleSearch" class="flex w-full">
       <input
+        ref="inputEl"
         v-model="searchInput"
         type="text"
         placeholder="소환사명#태그 (예: Hide on bush#KR1)"

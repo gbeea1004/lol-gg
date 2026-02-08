@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue'
+import { useSearchHistory } from '../composables/useSearchHistory'
 
 const props = defineProps({
   match: { type: Object, required: true },
@@ -8,17 +9,7 @@ const props = defineProps({
 
 const DDRAGON = 'https://ddragon.leagueoflegends.com/cdn/16.3.1'
 
-const HISTORY_KEY = 'lolgg_search_history'
-const MAX_HISTORY = 5
-
-function saveToHistory(gameName, tagLine) {
-  try {
-    const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]')
-    const filtered = history.filter(h => !(h.gameName === gameName && h.tagLine === tagLine))
-    filtered.unshift({ gameName, tagLine })
-    localStorage.setItem(HISTORY_KEY, JSON.stringify(filtered.slice(0, MAX_HISTORY)))
-  } catch { /* ignore */ }
-}
+const { save: saveToHistory } = useSearchHistory()
 
 const QUEUE_NAMES = {
   420: '솔로 랭크',
