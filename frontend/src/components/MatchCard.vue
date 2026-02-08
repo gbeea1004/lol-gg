@@ -6,7 +6,19 @@ const props = defineProps({
   tierMap: { type: Object, default: () => ({}) },
 })
 
-const DDRAGON = 'https://ddragon.leagueoflegends.com/cdn/15.3.1'
+const DDRAGON = 'https://ddragon.leagueoflegends.com/cdn/16.3.1'
+
+const HISTORY_KEY = 'lolgg_search_history'
+const MAX_HISTORY = 5
+
+function saveToHistory(gameName, tagLine) {
+  try {
+    const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]')
+    const filtered = history.filter(h => !(h.gameName === gameName && h.tagLine === tagLine))
+    filtered.unshift({ gameName, tagLine })
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(filtered.slice(0, MAX_HISTORY)))
+  } catch { /* ignore */ }
+}
 
 const QUEUE_NAMES = {
   420: '솔로 랭크',
@@ -258,7 +270,7 @@ const laneScore = computed(() => {
               target="_blank"
               class="text-[10px] w-16 truncate no-underline hover:underline"
               :class="participant.puuid === p.puuid ? 'text-text-primary font-semibold' : 'text-text-muted'"
-              @click.stop
+              @click.stop="saveToHistory(participant.gameName, participant.tagLine)"
             >
               {{ participant.gameName }}
             </router-link>
@@ -276,7 +288,7 @@ const laneScore = computed(() => {
               target="_blank"
               class="text-[10px] w-16 truncate no-underline hover:underline"
               :class="participant.puuid === p.puuid ? 'text-text-primary font-semibold' : 'text-text-muted'"
-              @click.stop
+              @click.stop="saveToHistory(participant.gameName, participant.tagLine)"
             >
               {{ participant.gameName }}
             </router-link>
@@ -336,7 +348,7 @@ const laneScore = computed(() => {
                 target="_blank"
                 class="block truncate font-semibold text-xs no-underline hover:underline"
                 :class="player.puuid === p.puuid ? 'text-text-primary' : 'text-text-secondary'"
-                @click.stop
+                @click.stop="saveToHistory(player.gameName, player.tagLine)"
               >
                 {{ player.gameName }}
               </router-link>

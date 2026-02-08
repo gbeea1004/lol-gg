@@ -3,7 +3,7 @@ const props = defineProps({
   summoner: { type: Object, required: true },
 })
 
-const DDRAGON = 'https://ddragon.leagueoflegends.com/cdn/15.3.1'
+const DDRAGON = 'https://ddragon.leagueoflegends.com/cdn/16.3.1'
 </script>
 
 <template>
