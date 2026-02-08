@@ -47,7 +47,7 @@ function loadFromCache() {
     if (!cached) return false
     const data = JSON.parse(cached)
     matches.value = data.matches
-    tierMap.value = data.tierMap || {}
+    tierMap.value = { ...tierMap.value, ...(data.tierMap || {}) }
     hasMore.value = data.hasMore
     return true
   } catch { return false }
@@ -82,7 +82,6 @@ async function fetchMatches(force = false) {
   loading.value = true
   error.value = null
   matches.value = []
-  tierMap.value = {}
   hasMore.value = true
   try {
     const res = await getMatches(props.puuid, 0, PAGE_SIZE, tabs[activeTab.value].filter)
@@ -126,7 +125,10 @@ function selectTab(index) {
 }
 
 onMounted(() => fetchMatches(false))
-watch(() => props.puuid, () => fetchMatches(false))
+watch(() => props.puuid, () => {
+  tierMap.value = {}
+  fetchMatches(false)
+})
 watch(() => props.refreshKey, (newVal, oldVal) => {
   if (newVal > oldVal) fetchMatches(true)
 })
