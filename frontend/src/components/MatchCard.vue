@@ -253,9 +253,15 @@ const laneScore = computed(() => {
             class="flex items-center gap-1"
           >
             <img :src="`${DDRAGON}/img/champion/${participant.championName}.png`" class="w-4 h-4 rounded-sm" />
-            <span class="text-[10px] w-16 truncate" :class="participant.puuid === p.puuid ? 'text-text-primary font-semibold' : 'text-text-muted'">
+            <router-link
+              :to="`/summoner/${participant.gameName}/${participant.tagLine}`"
+              target="_blank"
+              class="text-[10px] w-16 truncate no-underline hover:underline"
+              :class="participant.puuid === p.puuid ? 'text-text-primary font-semibold' : 'text-text-muted'"
+              @click.stop
+            >
               {{ participant.gameName }}
-            </span>
+            </router-link>
           </div>
         </div>
         <div class="space-y-0.5">
@@ -265,9 +271,15 @@ const laneScore = computed(() => {
             class="flex items-center gap-1"
           >
             <img :src="`${DDRAGON}/img/champion/${participant.championName}.png`" class="w-4 h-4 rounded-sm" />
-            <span class="text-[10px] w-16 truncate" :class="participant.puuid === p.puuid ? 'text-text-primary font-semibold' : 'text-text-muted'">
+            <router-link
+              :to="`/summoner/${participant.gameName}/${participant.tagLine}`"
+              target="_blank"
+              class="text-[10px] w-16 truncate no-underline hover:underline"
+              :class="participant.puuid === p.puuid ? 'text-text-primary font-semibold' : 'text-text-muted'"
+              @click.stop
+            >
               {{ participant.gameName }}
-            </span>
+            </router-link>
           </div>
         </div>
       </div>
@@ -319,9 +331,15 @@ const laneScore = computed(() => {
               </span>
             </div>
             <div class="min-w-0">
-              <div class="truncate font-semibold text-xs" :class="player.puuid === p.puuid ? 'text-text-primary' : 'text-text-secondary'">
+              <router-link
+                :to="`/summoner/${player.gameName}/${player.tagLine}`"
+                target="_blank"
+                class="block truncate font-semibold text-xs no-underline hover:underline"
+                :class="player.puuid === p.puuid ? 'text-text-primary' : 'text-text-secondary'"
+                @click.stop
+              >
                 {{ player.gameName }}
-              </div>
+              </router-link>
               <div v-if="tierMap[player.puuid]" class="text-[10px] font-semibold" :style="{ color: tierColor(tierMap[player.puuid]) }">{{ tierMap[player.puuid] }}</div>
             </div>
           </div>

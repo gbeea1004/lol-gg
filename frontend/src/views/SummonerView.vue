@@ -172,7 +172,7 @@ watch(() => route.params, fetchSummoner)
     <div v-else-if="summoner" class="max-w-6xl mx-auto px-4 py-6">
       <div class="flex flex-col lg:flex-row gap-6">
         <!-- Left Sidebar -->
-        <div class="lg:w-80 shrink-0 space-y-4">
+        <div class="lg:w-[22rem] shrink-0 space-y-4">
           <SummonerProfile :summoner="summoner" />
           <button
             @click="refresh"
