@@ -27,6 +27,7 @@ function handleSearch() {
 
   saveToHistory(gameName, tagLine)
   showHistory.value = false
+  inputEl.value?.blur()
   router.push({ name: 'Summoner', params: { gameName, tagLine } })
   searchInput.value = ''
 }
